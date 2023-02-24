@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Sign Up
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="width: 450px;">
+    <div class="modal-content  rounded-4 shadow">
+      <div class="modal-header p-5 pb-4 border-bottom-0 justify-content-center">
+        <h1 class="fw-bold mb-0 fs-2">Sign Up</h1>  
+      </div>
+      <div class="container w-100 p-5 pt-0">
+        <form class="" method="POST">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" placeholder="name@example.com"
+                {% if form.username.field.required %}required{% endif %} value="{% if form.username.value %}{{ form.username.value }}{% endif %}">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {% for err in form.username.errors %}
+                    <span class="text-danger-emphasis">{{ err }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" id="{{ form.password1.id_for_label }}" name="{{ form.password1.html_name }}" placeholder="Password"
+                {% if form.password1.field.required %}required{% endif %} value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {% for err in form.password1.errors %}
+                    <span class="text-danger-emphasis">{{ err }}</span>
+                {% endfor %}
+            </div>
+            <small class="text-muted">Enter the same password as before, for verification.</small>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" id="{{ form.password2.id_for_label }}" name="{{ form.password2.html_name }}" placeholder="Password"
+                {% if form.password2.field.required %}required{% endif %} value="{% if form.password2.value %}{{ form.password2.value }}{% endif %}">
+                <label for="{{ form.password2.id_for_label }}">Password Confirm</label>
+                {% for err in form.password2.errors %}
+                    <span class="text-danger-emphasis">{{ err }}</span>
+                {% endfor %}
+            </div>
+            <button class="w-100 mb-2 mt-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign up</button>
+            <small class="text-muted">By clicking Sign up, you agree to the terms of use.</small>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}
