@@ -25,7 +25,7 @@
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" placeholder="name@example.com"
                 {% if form.username.field.required %}required{% endif %} value="{% if form.username.value %}{{ form.username.value }}{% endif %}">
-                <label for="{{ form.username.id_for_label }}">Username</label>
+                <label for="{{ form.username.id_for_label }}">Email or Username</label>
                 {% for err in form.username.errors %}
                     <span class="text-danger-emphasis">{{ err }}</span>
                 {% endfor %}

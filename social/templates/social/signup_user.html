@@ -22,6 +22,14 @@
                 {% endfor %}
             </div>
             <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" id="{{ form.email.id_for_label }}" name="{{ form.email.html_name }}" placeholder="name@example.com"
+                {% if form.email.field.required %}required{% endif %} value="{% if form.email.value %}{{ form.email.value }}{% endif %}">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {% for err in form.email.errors %}
+                    <span class="text-danger-emphasis">{{ err }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-floating mb-3">
                 <input type="password" class="form-control rounded-3" id="{{ form.password1.id_for_label }}" name="{{ form.password1.html_name }}" placeholder="Password"
                 {% if form.password1.field.required %}required{% endif %} value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}">
                 <label for="{{ form.password1.id_for_label }}">Password</label>
