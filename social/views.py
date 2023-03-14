@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode  
 from django.utils.encoding import force_bytes, force_str
@@ -12,17 +12,14 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import UpdateView
 from django.core.mail import EmailMessage
 
-from .models import User, FriendRequest
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .models import User, FriendRequest, Post, Comment
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreationForm, UserUpdateForm
 from .token import email_verification_token
 
 # Create your views here.
-
-class HomeView(TemplateView):
-    template_name = "social/home.html"
-
 
 #Creation user and sending email confirmation
 
@@ -68,9 +65,10 @@ class ActivateView(View):
 
     def get(self, request, uidb64, token):
         user = self.get_user_from_email_verification_token(uidb64, token)
-        user.is_active = True
-        user.save()
-        login(request, user)
+        if user is not None:
+            user.is_active = True
+            user.save()
+            login(request, user)
         return redirect("home")
 
 
@@ -95,6 +93,9 @@ class UsersListView(ListView):
     context_object_name = "users"
 
 
+class ProfileView(DetailView):
+    model = User
+    template_name = "social/profile.html"
 
 
 
@@ -124,3 +125,39 @@ def accept_friend_request(request, id):
         return HttpResponse("Friend request accepted!")
     else:
         return HttpResponse("Friend request not accepted!")
+
+
+class PostCreateView(CreateView):
+    form_class = PostCreationForm
+    template_name = "social/create_post.html"
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.author = self.request.user
+        post.save()
+        return redirect("home")
+
+
+#Main page - list all posts
+
+class PostsListView(ListView):
+    model = Post
+    template_name = "social/home.html"
+    context_object_name = "posts"
+
+
+def post_like(request):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+
+    return redirect("home")
+
+
+class UserUpdateView(UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "social/edit_profile.html"
+    success_url = '/'

@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.HomeView.as_view(), name='home'),
+    path('', views.PostsListView.as_view(), name='home'),
     path('signup/', views.SignupUserView.as_view(), name='signup'),
     path('login/', views.LoginUserView.as_view(), name='login'),
     path('logout/', views.LogoutUserView.as_view(), name='logout'),
@@ -10,4 +10,8 @@ urlpatterns = [
     path('accept-friend-request/<int:id>/', views.accept_friend_request, name='accept-friend-request'),
     path('users/', views.UsersListView.as_view(), name='users-list'),
     path('activate/<uidb64>/<token>', views.ActivateView.as_view(), name='activate'),
+    path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
+    path('add-post/', views.PostCreateView.as_view(), name='add-post'),
+    path('post-like/', views.post_like, name="post-like"),
+    path('profile/<int:pk>/update/', views.UserUpdateView.as_view(), name='update-profile'),
 ]

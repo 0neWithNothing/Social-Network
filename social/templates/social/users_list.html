@@ -13,7 +13,7 @@
                 {% if not user.is_superuser %}
                     {% if user not in request.user.friends.all and user != request.user %}
                     <div class="row justify-content-between my-3">
-                        <div class="col-4">{{ user.username }}</div>
+                        <div class="col-4"><a href="{% url 'profile' user.id %}" class='text-decoration-none'>{{ user.username }}</a></div>
                         <a href="{% url 'send-friend-request' user.id %}" class="btn btn-outline-warning btn-sm col-6">Add to Friends</a>
                     </div>
                     {% endif %}

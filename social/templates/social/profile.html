@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ user.username }}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="width: 700px;">
+    <div class="modal-content  rounded-4 shadow p-4">
+        <img src="{{ user.avatar.url }}" alt="" class="border border-3 rounded-circle mb-2" style="max-width: 200px;">
+        <div class="row mb-2">
+            <div class="col-3">
+                <span class="text-warning-emphasis">Username:</span>
+            </div>
+            <div class="col-3">
+                {{ user.username }}
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-3">
+                <span class="text-warning-emphasis">Email address:</span>
+            </div>
+            <div class="col-3">
+                {{ user.email }}
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-3">
+                <span class="text-warning-emphasis">First name:</span>
+            </div>
+            <div class="col-3">
+                {{ user.first_name }}
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-3">
+                <span class="text-warning-emphasis">Last name:</span>
+            </div>
+            <div class="col-3">
+                {{ user.last_name }}
+            </div>
+        </div>
+        {% if user == request.user %}
+            <a href="" class="btn btn-warning">Edit Profile</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

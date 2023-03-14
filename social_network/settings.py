@@ -142,3 +142,6 @@ EMAIL_PORT = 587
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+MEDIA_URL = '/files/'
+MEDIA_ROOT = BASE_DIR / 'uploads'
