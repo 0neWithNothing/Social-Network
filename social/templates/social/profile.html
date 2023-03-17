@@ -20,7 +20,9 @@
             <div class="col-5 ps-0">
                 <div class='fs-2'>{{ user.first_name }} {{ user.last_name }}</div>
                 <div class='text-secondary fs-5'>@{{ user.username }}</div>
-                <div class='text-secondary mt-5'>Date of birth: {{ user.date_of_birth }}</div>
+                {% if user.date_of_birth %}
+                    <div class='text-secondary mt-5'>Date of birth: {{ user.date_of_birth }}</div>
+                {% endif %}
             </div>
             <div class="col-3 pt-2">
                 {% if user == request.user %}

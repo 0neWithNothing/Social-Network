@@ -128,6 +128,8 @@ def accept_friend_request(request, id):
         return HttpResponse("Friend request not accepted!")
 
 
+# Creating posts
+
 class PostCreateView(CreateView):
     form_class = PostCreationForm
     template_name = "social/create_post.html"
@@ -136,7 +138,7 @@ class PostCreateView(CreateView):
         post = form.save(commit=False)
         post.author = self.request.user
         post.save()
-        return redirect("home")
+        return HttpResponseRedirect(reverse("profile", kwargs={'pk': self.request.user.id}))
 
 
 #Main page - list all posts
