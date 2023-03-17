@@ -53,7 +53,7 @@ class Comment(models.Model):
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     """
     Deletes file from filesystem
-    when corresponding `MediaFile` object is deleted.
+    when corresponding `Post` object is deleted.
     """
     if instance.image:
         if os.path.isfile(instance.image.path):
@@ -64,7 +64,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
 def auto_delete_file_on_change(sender, instance, **kwargs):
     """
     Deletes old file from filesystem
-    when corresponding `MediaFile` object is updated
+    when corresponding `User` object is updated
     with new file.
     """
     if not instance.pk:

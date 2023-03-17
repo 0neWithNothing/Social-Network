@@ -99,6 +99,14 @@ class ProfileView(DetailView):
     template_name = "social/profile.html"
 
 
+# Update User
+
+class UserUpdateView(UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "social/edit_profile.html"
+    success_url = '/'
+
 
 #Two functions below for sending and accepting friend requests
 
@@ -165,10 +173,3 @@ class PostDeleteView(DeleteView):
     def get_success_url(self) -> str:
         return reverse('profile', kwargs={'pk': self.request.user.id})
 
-
-
-class UserUpdateView(UpdateView):
-    model = User
-    form_class = UserUpdateForm
-    template_name = "social/edit_profile.html"
-    success_url = '/'
