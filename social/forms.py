@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from crispy_forms.helper import FormHelper
@@ -33,6 +34,8 @@ class PostCreationForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'max': datetime.now().date()}))
+
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)
 
@@ -46,3 +49,4 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('avatar', 'username', 'first_name', 'last_name', 'bio', 'date_of_birth')
+        

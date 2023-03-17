@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode  
@@ -12,7 +13,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, DeleteView
 from django.core.mail import EmailMessage
 
 from .models import User, FriendRequest, Post, Comment
@@ -154,6 +155,14 @@ def post_like(request):
         post.likes.add(request.user)
 
     return redirect("home")
+
+
+class PostDeleteView(DeleteView):
+    model = Post
+    
+    def get_success_url(self) -> str:
+        return reverse('profile', kwargs={'pk': self.request.user.id})
+
 
 
 class UserUpdateView(UpdateView):

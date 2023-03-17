@@ -7,37 +7,7 @@
 {% block body %}
 <div class="container mt-5 w-50 rounded-4 shadow p-5" style="min-width: 600px;">
     {% for post in posts %}
-        <div class="h-100 d-flex align-items-center justify-content-center border-bottom pb-4 mb-4">
-            <div class="" style="min-width: 550px;">
-                <h2><a href="{% url 'profile' post.author.id %}" class='text-decoration-none'>{{ post.author.username }}</a></h2>
-                <div class="mb-3">{{ post.text }}</div>
-                {% if post.image %}
-                    <img src="{{  post.image.url  }}" alt="" class="border border-dark-subtle rounded w-75" style="min-width: 550px; max-width: 550px;">
-                {% endif %}
-                <div class="row mt-2">
-                    <div class="col text-start align-self-center small">{{ post.date }}</div>
-                    <div class="col text-end">
-                    {% if user.is_authenticated %}
-                        <form action="{% url 'post-like' %}" method="POST">
-                            {% csrf_token %}
-    
-                            {% if post in user.post_like.all %}
-                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-danger text-decoration-none p-0">
-                                    <i class="bi bi-heart-fill warning"></i><span class="ms-1">{{ post.number_of_likes }}</span>
-                                </button>
-                            {% else %}
-                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-secondary text-decoration-none p-0">
-                                    <i class="bi bi-heart"></i><span class="ms-1">{{ post.number_of_likes }}</span>
-                                </button>
-                            {% endif %}    
-                        </form>
-                    {% else %}
-                    <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to like this article!</a><br>
-                    {% endif %}
-                    </div>   
-                </div>
-            </div>
-        </div>
+        {% include 'social/post.html' %}
     {% endfor %}
 </div>
 {% endblock %}
