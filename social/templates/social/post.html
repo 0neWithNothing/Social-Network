@@ -1,47 +1,66 @@
-<div class="h-100 d-flex align-items-center justify-content-center border-bottom pb-4 mb-4">
+{% load static %}
+
+<div class="h-100  justify-content-center border-bottom pb-4 mb-4">
     <div class="" style="min-width: 550px;">
-        <div class='row'>
-            <div class='col'>
-                <h2><a href="{% url 'profile' post.author.id %}" class='text-decoration-none'>@{{ post.author.username }}</a></h2>
-            </div>
-            {% if post.author == request.user %}
-            <div class='col text-end'>
-                <form action="" method='POST'>
-                    {% csrf_token %}
-                    <a class='text-decoration-none text-danger' href="{% url 'delete-post' post.id %}">Delete</a>
-                </form>
-            </div>
-            {% endif %}
-        </div>
-        
-        <div class="mb-3">{{ post.text }}</div>
-        {% if post.image %}
-            <img src="{{  post.image.url  }}" alt="" class="border border-dark-subtle rounded w-75" style="min-width: 550px; max-width: 550px;">
-        {% endif %}
-        <div class="row mt-2 align-items-center">
-            <div class="col text-start align-self-center small">{{ post.date }}</div>
-            <div class='col text-center'>
-                <a class='text-decoration-none' href="{% url 'detail-post' post.id %}">{{ post.comments.count }} Comments</a>
-            </div>
-            <div class="col text-end">
-            {% if user.is_authenticated %}
-                <form action="{% url 'post-like' %}" method="POST">
-                    {% csrf_token %}
-            
-                    {% if post in user.post_like.all %}
-                        <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-danger text-decoration-none p-0">
-                            <i class="bi bi-heart-fill warning"></i><span class="ms-1">{{ post.number_of_likes }}</span>
-                        </button>
-                    {% else %}
-                        <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-secondary text-decoration-none p-0">
-                            <i class="bi bi-heart"></i><span class="ms-1">{{ post.number_of_likes }}</span>
-                        </button>
-                    {% endif %}    
-                </form>
+        <div class='row align-items-center mb-3'>
+            <div class="col-2 align-self-start px-0">
+            {% if post.author.avatar %}
+                <img src="{{ post.author.avatar.url }}" alt="" class="border border-3 rounded-circle" style="max-width: 80px; min-height: 80px;">
             {% else %}
-                <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to like this!</a><br>
+                <img src="{% static 'images/no-avatar.png' %}" alt="" class="border border-3 rounded-circle" style="max-width: 80px; min-height: 80px;">
             {% endif %}
-            </div>   
+            </div>
+            <div class="col align-self-start ps-0">
+                {% if post.author == request.user %}
+                    <div class='d-flex justify-content-between'>
+                        <div class='d-inline-flex'><a href="{% url 'profile' post.author.id %}" class='text-decoration-none fs-3'>@{{ post.author.username }}</a></div>
+                        <div class='d-inline-flex pt-2'>
+                            <form action="" method='POST'>
+                                {% csrf_token %}
+                                <a class='text-decoration-none text-danger' href="{% url 'delete-post' post.id %}">Delete</a>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'profile' post.author.id %}" class='text-decoration-none fs-3'>@{{ post.author.username }}</a>
+                {% endif %}
+                
+                <div class="fs-5 mb-2">{{ post.text }}</div>
+                <div>
+                    {% if post.image %}
+                        <img src="{{  post.image.url  }}" alt="" class="border border-dark-subtle rounded w-75" style="min-width: 500px; max-width: 500px; max-height: 600px;">
+                    {% endif %}
+                </div>
+                <div class="row mt-2 align-items-center">
+                    <div class="col text-start align-self-center small">{{ post.date }}</div>
+                    <div class='col text-center'>
+                        <a class='text-decoration-none' href="{% url 'detail-post' post.id %}">{{ post.comments.count }} Comments</a>
+                    </div>
+                    <div class="col text-end">
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'post-like' %}" method="POST">
+                            {% csrf_token %}
+                    
+                            {% if post in user.post_like.all %}
+                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-danger text-decoration-none p-0">
+                                    <i class="bi bi-heart-fill warning"></i><span class="ms-1">{{ post.number_of_likes }}</span>
+                                </button>
+                            {% else %}
+                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-secondary text-decoration-none p-0">
+                                    <i class="bi bi-heart"></i><span class="ms-1">{{ post.number_of_likes }}</span>
+                                </button>
+                            {% endif %}    
+                        </form>
+                    {% else %}
+                        <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to like this!</a><br>
+                    {% endif %}
+                    </div>   
+                </div>
+            </div>
+            
         </div>
+
+        
+        
     </div>
 </div>

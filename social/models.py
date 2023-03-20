@@ -29,7 +29,7 @@ class FriendRequest(models.Model):
 
 class Post(models.Model):
     image = models.ImageField(upload_to="images", null=True, blank=True)
-    text = models.TextField(max_length=500, blank=True)
+    text = models.TextField(max_length=300, blank=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="posts")
     date = models.DateField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='post_like')
@@ -40,7 +40,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="comments")
-    text = models.TextField(max_length=400)
+    text = models.TextField(max_length=300)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     likes = models.ManyToManyField(User, related_name='comment_like')
     date = models.DateField(auto_now=True)
