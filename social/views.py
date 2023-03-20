@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode  
 from django.utils.encoding import force_bytes, force_str
@@ -17,7 +17,7 @@ from django.views.generic.edit import UpdateView, DeleteView
 from django.core.mail import EmailMessage
 
 from .models import User, FriendRequest, Post, Comment
-from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreationForm, UserUpdateForm
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreationForm, UserUpdateForm, CommentCreateForm
 from .token import email_verification_token
 
 # Create your views here.
@@ -173,3 +173,44 @@ class PostDeleteView(DeleteView):
     def get_success_url(self) -> str:
         return reverse('profile', kwargs={'pk': self.request.user.id})
 
+
+
+class PostDetailView(View):
+    def get(self, request, pk):
+        post = Post.objects.get(id=pk)
+
+        context = {
+            "post": post,
+            "comment_form": CommentCreateForm,
+            "comments": post.comments.all().order_by("-id"),
+        }
+        return render(request, 'social/post_detail.html', context)
+
+    def post(self, request, pk):
+        comment_form = CommentCreateForm(request.POST)
+        post = Post.objects.get(id=pk)
+        user = request.user
+
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.post = post
+            comment.author = user
+            comment.save()
+
+            return HttpResponseRedirect(reverse("detail-post", args=[pk]))
+
+        context = {
+            "post": post,
+            "comment_form": comment_form,
+            "comments": post.comments.all().order_by("-id"),
+        }
+        return render(request, 'social/post_detail.html', context)
+
+def comment_like(request):
+    comment = get_object_or_404(Comment, id=request.POST.get('comment_id'))
+    if comment.likes.filter(id=request.user.id).exists():
+        comment.likes.remove(request.user)
+    else:
+        comment.likes.add(request.user)
+
+    return HttpResponseRedirect(reverse("detail-post", kwargs={'pk': comment.post.id}))
