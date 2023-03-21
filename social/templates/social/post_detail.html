@@ -33,25 +33,33 @@
                         <div class='fs-4'>@{{ comment.author.username }}</div>
                         <div class='text-secondary fs-6'>Replying to <a href="" class='text-decoration-none'>@{{ comment.post.author.username }}</a></div>
                     </div>
-                    <div class="col align-self-start text-end">{{ comment.date }}</div>
+                    <div class="col align-self-start text-end">
+                        {{ comment.date }}
+                        <form action="" method='POST'>
+                            {% csrf_token %}
+                            <a class='text-decoration-none text-danger' href="{% url 'delete-comment' comment.id %}">Delete</a>
+                        </form>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-1 me-2"></div>
                     <div class="col fs-5">{{ comment.text }}</div>
                     <div class='col text-end'>
                         {% if user.is_authenticated %}
-                        <form action="{% url 'comment-like' %}" method="POST">
+                        <form action="{% url 'comment-like' %}" method="POST" class="like-comment" id="{{ comment.id }}">
                             {% csrf_token %}
                     
-                            {% if comment in user.comment_like.all %}
-                                <button type="submit" name="comment_id" value="{{comment.id}}" class="btn btn-link text-danger text-decoration-none p-0">
-                                    <i class="bi bi-heart-fill warning"></i><span class="ms-1">{{ comment.number_of_likes }}</span>
-                                </button>
-                            {% else %}
-                                <button type="submit" name="comment_id" value="{{comment.id}}" class="btn btn-link text-secondary text-decoration-none p-0">
-                                    <i class="bi bi-heart"></i><span class="ms-1">{{ comment.number_of_likes }}</span>
-                                </button>
-                            {% endif %}
+                            <button type="submit" name="comment_id" value="{{comment.id}}" class="btn btn-link text-decoration-none p-0">
+                                {% if comment in user.comment_like.all %}
+                                    <div class="text-danger like-btn-{{ comment.id }}">
+                                        <span class="ms-1 like-counter{{ comment.id }}">{{ comment.number_of_likes }}</span> <i class="bi bi-heart-fill"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="text-secondary like-btn-{{ comment.id }}">
+                                        <span class="ms-1 like-counter{{ comment.id }}">{{ comment.number_of_likes }}</span> <i class="bi bi-heart"></i>
+                                    </div>
+                                {% endif %} 
+                            </button>
                         </form>
                         {% else %}
                             <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to like this!</a><br>

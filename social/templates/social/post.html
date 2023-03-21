@@ -38,18 +38,24 @@
                     </div>
                     <div class="col text-end">
                     {% if user.is_authenticated %}
-                        <form action="{% url 'post-like' %}" method="POST">
+                        <form action="{% url 'post-like' %}" method="POST" class="like-post" id="{{ post.id }}">
                             {% csrf_token %}
                     
-                            {% if post in user.post_like.all %}
-                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-danger text-decoration-none p-0">
-                                    <i class="bi bi-heart-fill warning"></i><span class="ms-1">{{ post.number_of_likes }}</span>
+                            
+                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-decoration-none p-0">
+                                    {% if post in user.post_like.all %}
+                                        <div class="text-danger like-btn-{{ post.id }}">
+                                            <span class="me-1 like-counter{{ post.id }}">{{ post.number_of_likes }}</span> <i class="bi bi-heart-fill"></i>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-secondary like-btn-{{ post.id }}">
+                                            <span class="me-1 like-counter{{ post.id }}">{{ post.number_of_likes }}</span> <i class="bi bi-heart"></i>
+                                        </div>
+                                    {% endif %} 
                                 </button>
-                            {% else %}
-                                <button type="submit" name="post_id" value="{{post.id}}" class="btn btn-link text-secondary text-decoration-none p-0">
-                                    <i class="bi bi-heart"></i><span class="ms-1">{{ post.number_of_likes }}</span>
-                                </button>
-                            {% endif %}    
+                            
+                    
+                               
                         </form>
                     {% else %}
                         <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to like this!</a><br>

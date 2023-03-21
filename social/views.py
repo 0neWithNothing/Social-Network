@@ -5,7 +5,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string  
 from django.contrib.sites.shortcuts import get_current_site  
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
@@ -157,6 +157,7 @@ class PostsListView(ListView):
     context_object_name = "posts"
 
 
+@login_required
 def post_like(request):
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
     if post.likes.filter(id=request.user.id).exists():
@@ -164,7 +165,12 @@ def post_like(request):
     else:
         post.likes.add(request.user)
 
-    return redirect("home")
+    data  = {
+        'liked': post.likes.filter(id=request.user.id).exists(),
+        'likes_count': post.number_of_likes()
+    }
+
+    return JsonResponse(data, safe=False)
 
 
 class PostDeleteView(DeleteView):
@@ -206,6 +212,8 @@ class PostDetailView(View):
         }
         return render(request, 'social/post_detail.html', context)
 
+
+@login_required
 def comment_like(request):
     comment = get_object_or_404(Comment, id=request.POST.get('comment_id'))
     if comment.likes.filter(id=request.user.id).exists():
@@ -213,4 +221,9 @@ def comment_like(request):
     else:
         comment.likes.add(request.user)
 
-    return HttpResponseRedirect(reverse("detail-post", kwargs={'pk': comment.post.id}))
+    data  = {
+        'liked': comment.likes.filter(id=request.user.id).exists(),
+        'likes_count': comment.number_of_likes()
+    }
+    
+    return JsonResponse(data, safe=False)
