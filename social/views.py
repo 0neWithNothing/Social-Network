@@ -15,6 +15,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import UpdateView, DeleteView
 from django.core.mail import EmailMessage
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from .models import User, FriendRequest, Post, Comment
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreationForm, UserUpdateForm, CommentCreateForm
@@ -173,12 +174,15 @@ def post_like(request):
     return JsonResponse(data, safe=False)
 
 
-class PostDeleteView(DeleteView):
+class PostDeleteView(UserPassesTestMixin, DeleteView):
     model = Post
     
     def get_success_url(self) -> str:
-        return reverse('profile', kwargs={'pk': self.request.user.id})
+        return self.request.META.get('HTTP_REFERER')
 
+
+    def test_func(self):
+        return self.request.user == self.get_object().author
 
 
 class PostDetailView(View):
@@ -227,3 +231,5 @@ def comment_like(request):
     }
     
     return JsonResponse(data, safe=False)
+
+
