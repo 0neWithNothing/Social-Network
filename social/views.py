@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site  
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views import View
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -233,3 +232,12 @@ def comment_like(request):
     return JsonResponse(data, safe=False)
 
 
+class CommentDeleteView(UserPassesTestMixin, DeleteView):
+    model = Comment
+    
+    def get_success_url(self) -> str:
+        return self.request.META.get('HTTP_REFERER')
+
+
+    def test_func(self):
+        return self.request.user == self.get_object().author
