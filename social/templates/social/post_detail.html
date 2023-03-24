@@ -35,6 +35,8 @@
                     </div>
                     <div class="col align-self-start text-end">
                         {{ comment.date }}
+
+                        {% if comment.author == request.user %}
                         <p>
                             <a class='text-decoration-none text-danger' data-bs-toggle="modal" data-bs-target="#exampleModalComment"  href="">Delete</a>
                         </p>
@@ -63,7 +65,8 @@
                                 </div>
                             </div>
                         </div>
-                        
+                        {% endif %}
+
                     </div>
                 </div>
                 <div class="row">
