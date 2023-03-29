@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chat
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="width: 750px;">
+    <div class="modal-content  rounded-4 shadow p-5" style='min-height: 100vh;'>
+        What chat room would you like to enter?<br>
+        <input id="room-name-input" type="text" size="100"><br>
+        <input id="room-name-submit" type="button" value="Enter">
+    </div>
+</div>
+    <script>
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = '/chat/' + roomName + '/';
+        };
+    </script>
+{% endblock %}

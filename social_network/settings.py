@@ -78,6 +78,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'social_network.wsgi.application'
 ASGI_APPLICATION = "social_network.asgi.application"
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
