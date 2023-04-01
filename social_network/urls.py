@@ -21,5 +21,5 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('social.urls')),
-    path('chat/', include('chat.urls')),
+    path('chat/', include(('chat.urls', 'chat'), namespace='chat')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
