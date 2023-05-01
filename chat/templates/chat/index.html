@@ -1,15 +1,19 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     Chat
 {% endblock %}
 
+{% block links %}
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'chat/css/chat_style.css' %}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5" style="width: 750px;">
+{% comment %} <div class="container mt-5" style="width: 750px;">
     <div class="modal-content  rounded-4 shadow p-5" style='min-height: 100vh;'>
         What chat room would you like to enter?<br>
-        <input id="room-name-input" type="text" size="100"><br>
-        <input id="room-name-submit" type="button" value="Enter">
         {% for room in rooms %}
         <div class="card mt-5 text-center" style="width: 12rem;">
             <div class="card-body">
@@ -20,18 +24,116 @@
         {% endfor %}
     </div>
     
-</div>
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+</div> {% endcomment %}
+<div class="container mt-5">
+    <div class="modal-content  rounded-4 shadow p-5" style='min-height: 100vh;'>
+    <!-- Page header start -->
+    <div class="page-title">
+        <div class="row gutters">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <h5 class="title">Chat App</h5>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"> </div>
+        </div>
+    </div>
+    <!-- Page header end -->
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/chat/' + roomName + '/';
-        };
-    </script>
+    <!-- Content wrapper start -->
+    <div class="content-wrapper">
+
+        <!-- Row start -->
+        <div class="row gutters">
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+                <div class="card m-0">
+
+                    <!-- Row start -->
+                    <div class="row no-gutters">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
+                            <div class="users-container">
+                                <div class="chat-search-box">
+                                    <div class="input-group">
+                                        <input class="form-control" placeholder="Search">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-info">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="users">
+                                    {% for user in users %}
+                                    <li class="person" data-chat="person1">
+                                        <div class="user">
+                                            {% if user.avatar %}
+                                                <img src="{{ user.avatar.url }}" alt="">
+                                            {% else %}
+                                                <img src="{% static 'images/no-avatar.png' %}" alt="">
+                                            {% endif %}
+                                            <span class="status busy"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">{{ user.username }}</span>
+                                            <span class="time">15/02/2019</span>
+                                        </p>
+                                    </li>
+                                    {% endfor %}
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
+                            <div class="selected-user">
+                                <span>To: <span class="name">Emily Russell</span></span>
+                            </div>
+                            <div class="chat-container d-flex flex-column">
+                                <ul class="chat-box chatContainerScroll" id="chat-log" style="overflow-y: auto;">
+                                    {% for message in messages %}
+                                        {% if message.author == request.user %}
+                                            <li class="chat-right">
+                                                <div class="chat-text">
+                                                    {{ message.text }}
+                                                </div>
+                                                <div class="chat-avatar">
+                                                    <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                                    <div class="chat-name">{{ message.author.username }}</div>
+                                                </div>
+                                            </li>
+                                        {% else %}
+                                            <li class="chat-left">
+                                                <div class="chat-avatar">
+                                                    <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                                    <div class="chat-name">{{ message.author.username }}</div>
+                                                </div>
+                                                <div class="chat-text">
+                                                    {{ message.text }}
+                                                </div>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                <div class="mt-auto form-group mb-0 d-flex">
+                                    <textarea class="form-control" rows="3" placeholder="Type your message here..." id="chat-message-input"></textarea>
+                                    <i class="fa fa-paperclip attachment fs-1 align-self-center ms-2" aria-hidden="true"></i>
+                                    <button id="chat-message-submit" class="submit btn btn-link">
+                                        <i class="bi bi-send-fill fs-1" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Row end -->
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Row end -->
+        </div>
+    </div>
+    <!-- Content wrapper end -->
+
+    </div>
+</div>
 {% endblock %}

@@ -34,7 +34,7 @@ class PostCreationForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'max': datetime.now().date()}))
+    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'max': datetime.now().date()}))
 
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)

@@ -70,6 +70,9 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     if not instance.pk:
         return False
 
+    if not User.objects.get(pk=instance.pk).avatar:
+        return False
+    
     try:
         old_file = User.objects.get(pk=instance.pk).avatar
     except User.DoesNotExist:

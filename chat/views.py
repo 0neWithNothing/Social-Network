@@ -1,15 +1,19 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from django.contrib.auth import get_user_model
 import json
 
 from .models import Room, Message
 
+User = get_user_model()
+
+
 @login_required
 def index(request):
-    rooms = Room.objects.all()
+    users = User.objects.exclude(username=request.user.username)
 
-    return render(request, "chat/index.html", {"rooms": rooms})
+    return render(request, "chat/index.html", {"users": users})
 
 
 @login_required
