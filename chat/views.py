@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth import get_user_model
 import json
 
-from .models import Room, Message, PrivateMessage
+from .models import PrivateMessage
 
 User = get_user_model()
 

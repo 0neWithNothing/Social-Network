@@ -5,7 +5,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .models import Message, Room, PrivateMessage
+from .models import PrivateMessage
 from social.models import User
 
 
