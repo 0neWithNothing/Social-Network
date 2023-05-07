@@ -13,6 +13,7 @@ class User(AbstractUser):
     bio = models.TextField(max_length=300, blank=True)
     avatar = models.ImageField(upload_to="images", null=True)
     date_of_birth = models.DateField(null=True, blank=True)
+    online_status = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['username']
@@ -72,7 +73,7 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 
     if not User.objects.get(pk=instance.pk).avatar:
         return False
-    
+     
     try:
         old_file = User.objects.get(pk=instance.pk).avatar
     except User.DoesNotExist:

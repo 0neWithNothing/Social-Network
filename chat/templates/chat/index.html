@@ -65,18 +65,21 @@
                                 <ul class="users">
                                     {% for user in users %}
                                     <li class="person" data-chat="person1">
-                                        <div class="user">
-                                            {% if user.avatar %}
-                                                <img src="{{ user.avatar.url }}" alt="">
-                                            {% else %}
-                                                <img src="{% static 'images/no-avatar.png' %}" alt="">
-                                            {% endif %}
-                                            <span class="status busy"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">{{ user.username }}</span>
-                                            <span class="time">15/02/2019</span>
-                                        </p>
+                                        <a href="{% url 'chat:room' username=user.username %}" class="stretched-link text-decoration-none text-body">
+                                            <div class="user">
+                                                {% if user.avatar %}
+                                                    <img src="{{ user.avatar.url }}" alt="">
+                                                {% else %}
+                                                    <img src="{% static 'images/no-avatar.png' %}" alt="">
+                                                {% endif %}
+                                                <span class="status busy"></span>
+                                            </div>
+                                            
+                                            <p class="name-time">
+                                                <span class="name">{{ user.username }}</span>
+                                                <span class="time">15/02/2019</span>
+                                            </p>
+                                        </a>
                                     </li>
                                     {% endfor %}
                                     
@@ -84,9 +87,7 @@
                             </div>
                         </div>
                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
-                            <div class="selected-user">
-                                <span>To: <span class="name">Emily Russell</span></span>
-                            </div>
+
                             <div class="chat-container d-flex flex-column">
                                 <ul class="chat-box chatContainerScroll" id="chat-log" style="overflow-y: auto;">
                                     {% for message in messages %}

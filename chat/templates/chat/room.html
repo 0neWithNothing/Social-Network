@@ -49,67 +49,58 @@
                                     </div>
                                 </div>
                                 <ul class="users">
+                                    {% for user in users %}
                                     <li class="person" data-chat="person1">
-                                        <div class="user">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <span class="status busy"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Steve Bangalter</span>
-                                            <span class="time">15/02/2019</span>
-                                        </p>
+                                        <a href="{% url 'chat:room' username=user.username %}" class="stretched-link text-decoration-none text-body">
+                                            <div class="user">
+                                                {% if user.avatar %}
+                                                    <img src="{{ user.avatar.url }}" alt="">
+                                                {% else %}
+                                                    <img src="{% static 'images/no-avatar.png' %}" alt="">
+                                                {% endif %}
+                                                <span class="status busy"></span>
+                                            </div>
+
+                                            <p class="name-time">
+                                                <span class="name">{{ user.username }}</span>
+                                                <span class="time">15/02/2019</span>
+                                            </p>
+                                        </a>
                                     </li>
+                                    {% endfor %}
+                                    
                                 </ul>
                             </div>
                         </div>
                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
                             <div class="selected-user">
-                                <span>To: <span class="name">Emily Russell</span></span>
+                                <span>To: <span class="name">{{ user.username }}</span></span>
                             </div>
                             <div class="chat-container d-flex flex-column">
                                 <ul class="chat-box chatContainerScroll" id="chat-log" style="overflow-y: auto;">
                                     {% for message in messages %}
-                                        {% if message.author == request.user %}
+                                        {% if message.sender == request.user %}
                                             <li class="chat-right">
                                                 <div class="chat-text">
-                                                    {{ message.text }}
+                                                    {{ message.message }}
                                                 </div>
                                                 <div class="chat-avatar">
-                                                    <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                                    <div class="chat-name">{{ message.author.username }}</div>
+                                                    <img src="{{ message.sender.avatar.url }}" alt="No image">
+                                                    <div class="chat-name">{{ message.sender.username }}</div>
                                                 </div>
                                             </li>
                                         {% else %}
                                             <li class="chat-left">
                                                 <div class="chat-avatar">
-                                                    <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                                    <div class="chat-name">{{ message.author.username }}</div>
+                                                    <img src="{{ message.sender.avatar.url }}" alt="No image">
+                                                    <div class="chat-name">{{ message.sender.username }}</div>
                                                 </div>
                                                 <div class="chat-text">
-                                                    {{ message.text }}
+                                                    {{ message.message }}
                                                 </div>
                                             </li>
                                         {% endif %}
                                     {% endfor %}
-                                    {% comment %} <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">Hello, I'm Russell.
-                                            <br>How can I help you today?
-                                        </div>
-                                        <div class="chat-hour">08:55 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:56 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Hi, Russell
-                                            <br> I need more information about Developer Plan.</div>
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Sam</div>
-                                        </div>
-                                    </li> {% endcomment %}
                                 </ul>
                                 <div class="mt-auto form-group mb-0 d-flex">
                                     <textarea class="form-control" rows="3" placeholder="Type your message here..." id="chat-message-input"></textarea>
@@ -134,31 +125,61 @@
 
     </div>
 </div>
+
+{{user.id|json_script:"json-username"}}
+{{user.username|json_script:"json-username-receiver"}}
+{{user.avatar.url|json_script:"json-avatar-receiver"}}
+{{request.user.username|json_script:"json-message-username"}}
+{{request.user.avatar.url|json_script:"json-avatar-sender"}}
+
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 <script>
-    const roomName = {{ room_name_json }};
-    const userName = {{ username }};
+    const id = JSON.parse(document.getElementById('json-username').textContent);
+    const message_username = JSON.parse(document.getElementById('json-message-username').textContent);
+    const receiver = JSON.parse(document.getElementById('json-username-receiver').textContent);
+    const avatar_receiver = JSON.parse(document.getElementById('json-avatar-receiver').textContent);
+    const avatar_sender = JSON.parse(document.getElementById('json-avatar-sender').textContent);
 
     const chatSocket = new WebSocket(
         'ws://' + window.location.host +
-        '/ws/chat/' + roomName + '/'
+        '/ws/chat/' + id + '/'
     );
 
+    chatSocket.onopen = function(e){
+        console.log("CONNECTION ESTABLISHED");
+    }
+    
+    chatSocket.onclose = function(e){
+        console.log("CONNECTION LOST");
+    }
+    
+    chatSocket.onerror = function(e){
+        console.log("ERROR OCCURED");
+    }
+    
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log(data);
+
         if (data.message) {
-            let htmlAvatar = '<div class="chat-avatar">';
-            htmlAvatar += '<img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">';
-            htmlAvatar += '<div class="chat-name">' + data.username + '</div></div>';
+            let htmlUser = '<div class="chat-avatar">';
+
+            if (data.username === message_username) {
+                htmlUser += '<img src="' + avatar_sender + '" alt="Retail Admin">';
+            } else {
+                htmlUser += '<img src="' + avatar_receiver + '" alt="Retail Admin">';
+            }
+
+            htmlUser += '<div class="chat-name">' + data.username + '</div></div>';
             let htmlText = '<div class="chat-text">' + data.message + '</div>';
             let html = '';
             let liEl = document.createElement('li');
-            if (data.username === userName) {
-                html = htmlText + htmlAvatar
+
+            if (data.username === message_username) {
+                html = htmlText + htmlUser
                 liEl.className = 'chat-right';
             } else {
-                html = htmlAvatar + htmlText
+                html = htmlUser + htmlText
                 liEl.className = 'chat-left';
             }
             liEl.innerHTML += html
@@ -168,10 +189,6 @@
         } else {
             alert("The message was empty!")
         }
-    };
-
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
     };
 
     document.querySelector('#chat-message-input').focus();
@@ -184,10 +201,10 @@
     document.querySelector('#chat-message-submit').onclick = function(e) {
         const messageInputDom = document.querySelector('#chat-message-input');
         const message = messageInputDom.value;
+
         chatSocket.send(JSON.stringify({
             'message': message,
-            'username': userName,
-            'room': roomName,
+            'username': message_username,
         }));
         messageInputDom.value = '';
     };

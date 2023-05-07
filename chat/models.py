@@ -28,7 +28,7 @@ class PrivateMessage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f'{self.sender.username}-{self.thread_name}' if self.sender else f'{self.message}-{self.thread_name}'
+        return self.thread_name
     
     class Meta:
         ordering = ('-timestamp',)
