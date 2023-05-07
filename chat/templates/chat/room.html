@@ -58,7 +58,7 @@
                                                 {% else %}
                                                     <img src="{% static 'images/no-avatar.png' %}" alt="">
                                                 {% endif %}
-                                                <span class="status busy"></span>
+                                                <span id="{{ user.username }}_status" class="status {% if user.online_status %}online{% else %}offline{% endif %}"></span>
                                             </div>
 
                                             <p class="name-time">
@@ -74,7 +74,13 @@
                         </div>
                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
                             <div class="selected-user">
-                                <span>To: <span class="name">{{ user.username }}</span></span>
+                                <span>To: <span class="name">{{ user.username }}</span> - 
+                                {% if user.online_status %}
+                                    <span id="{{ user.username }}_small" class="small">Online</span>
+                                {% else %}
+                                    <span id="{{ user.username }}_small" class="small">Offline</span>
+                                {% endif %}
+                                </span>
                             </div>
                             <div class="chat-container d-flex flex-column">
                                 <ul class="chat-box chatContainerScroll" id="chat-log" style="overflow-y: auto;">
@@ -133,86 +139,6 @@
 {{request.user.avatar.url|json_script:"json-avatar-sender"}}
 
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
-<script>
-    const id = JSON.parse(document.getElementById('json-username').textContent);
-    const message_username = JSON.parse(document.getElementById('json-message-username').textContent);
-    const receiver = JSON.parse(document.getElementById('json-username-receiver').textContent);
-    const avatar_receiver = JSON.parse(document.getElementById('json-avatar-receiver').textContent);
-    const avatar_sender = JSON.parse(document.getElementById('json-avatar-sender').textContent);
-
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/chat/' + id + '/'
-    );
-
-    chatSocket.onopen = function(e){
-        console.log("CONNECTION ESTABLISHED");
-    }
-    
-    chatSocket.onclose = function(e){
-        console.log("CONNECTION LOST");
-    }
-    
-    chatSocket.onerror = function(e){
-        console.log("ERROR OCCURED");
-    }
-    
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        console.log(data);
-
-        if (data.message) {
-            let htmlUser = '<div class="chat-avatar">';
-
-            if (data.username === message_username) {
-                htmlUser += '<img src="' + avatar_sender + '" alt="Retail Admin">';
-            } else {
-                htmlUser += '<img src="' + avatar_receiver + '" alt="Retail Admin">';
-            }
-
-            htmlUser += '<div class="chat-name">' + data.username + '</div></div>';
-            let htmlText = '<div class="chat-text">' + data.message + '</div>';
-            let html = '';
-            let liEl = document.createElement('li');
-
-            if (data.username === message_username) {
-                html = htmlText + htmlUser
-                liEl.className = 'chat-right';
-            } else {
-                html = htmlUser + htmlText
-                liEl.className = 'chat-left';
-            }
-            liEl.innerHTML += html
-
-            document.querySelector('#chat-log').appendChild(liEl);
-            scrollToBottom()
-        } else {
-            alert("The message was empty!")
-        }
-    };
-
-    document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeyup = function(e) {
-        if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
-        }
-    };
-
-    document.querySelector('#chat-message-submit').onclick = function(e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'username': message_username,
-        }));
-        messageInputDom.value = '';
-    };
-
-    function scrollToBottom() {
-        const objDiv = document.querySelector('#chat-log');
-        objDiv.scrollTop =objDiv.scrollHeight;
-    }
-    scrollToBottom()
-</script>
+<script src="{% static 'chat/js/chat.js' %}"></script>
+<script src="{% static 'chat/js/online_status.js' %}"></script>
 {% endblock %}

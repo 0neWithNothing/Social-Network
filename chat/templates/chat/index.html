@@ -72,7 +72,7 @@
                                                 {% else %}
                                                     <img src="{% static 'images/no-avatar.png' %}" alt="">
                                                 {% endif %}
-                                                <span class="status busy"></span>
+                                                <span id="{{ user.username }}_status" class="status {% if user.online_status %}online{% else %}offline{% endif %}"></span>
                                             </div>
                                             
                                             <p class="name-time">
@@ -137,4 +137,10 @@
 
     </div>
 </div>
+
+{{request.user.username|json_script:"json-message-username"}}
+
+<script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+<script src="{% static 'chat/js/online_status.js' %}"></script>
+
 {% endblock %}
