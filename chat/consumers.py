@@ -5,7 +5,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .models import PrivateMessage
+from .models import PrivateMessage, ChatNotification
 from social.models import User
 
 
@@ -35,12 +35,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
-        print(data)
+
         message = data['message']
         username = data['username']
-        # receiver = data['receiver']
+        receiver = data['receiver']
 
-        await self.save_message(username, self.room_group_name, message)
+        await self.save_message(username, self.room_group_name, message, receiver)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -62,38 +62,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     @database_sync_to_async
-    def save_message(self, username, thread_name, message):
+    def save_message(self, username, thread_name, message, receiver):
         user = User.objects.get(username=username)
-        PrivateMessage.objects.create(sender=user, message=message, thread_name=thread_name)
-        # other_user_id = self.scope['url_route']['kwargs']['id']
-        # get_user = User.objects.get(id=other_user_id)
-        # if receiver == get_user.username:
-        #     ChatNotification.objects.create(chat=chat_obj, user=get_user)
-
-# class NotificationConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         my_id = self.scope['user'].id
-#         self.room_group_name = f'{my_id}'
-#         await self.channel_layer.group_add(
-#             self.room_group_name,
-#             self.channel_name
-#         )
+        chat_obj = PrivateMessage.objects.create(sender=user, message=message, thread_name=thread_name)
         
-#         await self.accept()
+        other_user_id = self.scope['url_route']['kwargs']['id']
+        get_user = User.objects.get(id=other_user_id)
+        if receiver == get_user.username:
+            ChatNotification.objects.create(chat=chat_obj, user=get_user)
 
-#     async def disconnect(self, code):
-#         self.channel_layer.group_discard(
-#             self.room_group_name,
-#             self.channel_name
-#         )
+class NotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        my_id = self.scope['user'].id
+        self.room_group_name = f'{my_id}'
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        
+        await self.accept()
 
-#     async def send_notification(self, event):
-#         data = json.loads(event.get('value'))
-#         count = data['count']
-#         print(count)
-#         await self.send(text_data=json.dumps({
-#             'count':count
-#         }))
+    async def disconnect(self, code):
+        self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def send_notification(self, event):
+        data = json.loads(event.get('value'))
+        count = data['count']
+        await self.send(text_data=json.dumps({
+            'count':count
+        }))
         
         
 class OnlineStatusConsumer(AsyncWebsocketConsumer):

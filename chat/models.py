@@ -15,3 +15,12 @@ class PrivateMessage(models.Model):
     
     class Meta:
         ordering = ('-timestamp',)
+
+
+class ChatNotification(models.Model):
+    chat = models.ForeignKey(PrivateMessage, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_seen = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.user.username
