@@ -1,4 +1,5 @@
 from django.urls import reverse_lazy, reverse
+from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode  
@@ -21,6 +22,14 @@ from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreatio
 from .token import email_verification_token
 
 # Create your views here.
+
+def search(request):
+    req = request.GET.get('search')
+    posts = Post.objects.filter(
+        Q(author__username__icontains=req)|Q(author__first_name__iexact=req)|Q(author__last_name__iexact=req)|Q(text__icontains=req)
+    )
+
+    return render(request, "social/home.html", {'posts': posts})
 
 #Creation user and sending email confirmation
 
