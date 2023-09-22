@@ -199,7 +199,7 @@ class PostDetailView(View):
         context = {
             "post": post,
             "comment_form": CommentCreateForm,
-            "comments": post.comments.all().order_by("-id"),
+            "comments": post.comments.all(),
         }
         return render(request, 'social/post_detail.html', context)
 

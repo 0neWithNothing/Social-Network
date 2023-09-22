@@ -71,11 +71,7 @@
                                     <li class="person" data-chat="person1">
                                         <a href="{% url 'chat:room' username=user.username %}" class="stretched-link text-decoration-none text-body">
                                             <div class="user">
-                                                {% if user.avatar %}
-                                                    <img src="{{ user.avatar.url }}" alt="">
-                                                {% else %}
-                                                    <img src="{% static 'images/no-avatar.png' %}" alt="">
-                                                {% endif %}
+                                                <img src="{{ user.avatar.url }}" alt="">
                                                 <span id="{{ user.username }}_status" class="status {% if user.online_status %}online{% else %}offline{% endif %}"></span>
                                             </div>
                                             

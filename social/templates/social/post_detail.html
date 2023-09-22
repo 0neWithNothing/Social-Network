@@ -23,11 +23,7 @@
             <div class='border-bottom py-3'>
                 <div class='row align-items-center'>
                     <div class="col-1 me-2">
-                    {% if comment.author.avatar %}
                         <img src="{{ comment.author.avatar.url }}" alt="" class="border border-3 rounded-circle" style="max-width: 50px; min-height: 50px;">
-                    {% else %}
-                        <img src="{% static 'images/no-avatar.png' %}" alt="" class="border border-3 rounded-circle" style="max-width: 50px; min-height: 50px;">
-                    {% endif %}
                     </div>
                     <div class="col">
                         <div class='fs-4'>@{{ comment.author.username }}</div>

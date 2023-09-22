@@ -4,6 +4,7 @@ const receiver = JSON.parse(document.getElementById('json-username-receiver').te
 const avatar_receiver = JSON.parse(document.getElementById('json-avatar-receiver').textContent);
 const avatar_sender = JSON.parse(document.getElementById('json-avatar-sender').textContent);
 
+
 const chatSocket = new WebSocket(
     'ws://' + window.location.host +
     '/ws/chat/' + id + '/'

@@ -11,7 +11,7 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     bio = models.TextField(max_length=300, blank=True)
-    avatar = models.ImageField(upload_to="images", null=True)
+    avatar = models.ImageField(upload_to="images", default='no-avatar.png')
     date_of_birth = models.DateField(null=True, blank=True)
     online_status = models.BooleanField(default=False)
 
