@@ -32,11 +32,14 @@ class Post(models.Model):
     image = models.ImageField(upload_to="images", null=True, blank=True)
     text = models.TextField(max_length=300, blank=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="posts")
-    date = models.DateField(auto_now=True)
+    date = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='post_like')
 
     def number_of_likes(self):
         return self.likes.count()
+    
+    class Meta:
+        ordering = ["-date"]
 
 
 class Comment(models.Model):
@@ -44,10 +47,13 @@ class Comment(models.Model):
     text = models.TextField(max_length=300)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     likes = models.ManyToManyField(User, related_name='comment_like')
-    date = models.DateField(auto_now=True)
+    date = models.DateTimeField(auto_now=True)
 
     def number_of_likes(self):
         return self.likes.count()
+
+    class Meta:
+        ordering = ["date"]
 
 
 @receiver(models.signals.post_delete, sender=Post)

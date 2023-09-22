@@ -17,11 +17,11 @@
                         <div class='d-inline-flex pt-2'>
                             <form action="" method='POST'>
                                 {% csrf_token %}
-                                <a class='text-decoration-none text-danger' data-bs-toggle="modal" data-bs-target="#exampleModal"  href="">Delete</a>
+                                <a class='text-decoration-none text-danger' data-bs-toggle="modal" data-bs-target="#exampleModal{{ post.id }}"  href="">Delete</a>
                             </form>
                             
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="exampleModal{{ post.id }}" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">

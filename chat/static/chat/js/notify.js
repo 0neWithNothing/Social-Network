@@ -13,7 +13,7 @@ var count_badge = document.getElementById('count_badge')
 
 notify_socket.onmessage = function(e){
     const data = JSON.parse(e.data)
-    count_badge.innerHTML = data.count
+    count_badge.textContent = data.count
 }
 
 notify_socket.onclose = function(e){

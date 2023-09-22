@@ -1,5 +1,6 @@
 import json
 
+from django.db.models import Q
 from asgiref.sync import async_to_sync, sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
@@ -11,6 +12,7 @@ from social.models import User
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        
         my_id = self.scope['user'].id
         other_user_id = self.scope['url_route']['kwargs']['id']
         if int(my_id) > int(other_user_id):
@@ -19,6 +21,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_name = f'{other_user_id}-{my_id}'
 
         self.room_group_name = 'chat_%s' % self.room_name
+
+        await self.read_message(my_id, self.room_group_name)
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -70,6 +74,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         get_user = User.objects.get(id=other_user_id)
         if receiver == get_user.username:
             ChatNotification.objects.create(chat=chat_obj, user=get_user)
+
+
+    @database_sync_to_async
+    def read_message(self, user_id, chat):
+        user = User.objects.get(pk=user_id)
+        unread = ChatNotification.objects.filter(Q(user=user)&Q(chat__thread_name__exact=chat)&Q(is_seen=False))
+        unread.update(is_seen=True)
+        
+
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):

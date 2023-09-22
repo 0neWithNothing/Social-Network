@@ -8,12 +8,11 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site  
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views import View
-from django.views.generic.edit import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import UpdateView, DeleteView
+from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.core.mail import EmailMessage
 from django.contrib.auth.mixins import UserPassesTestMixin
 
