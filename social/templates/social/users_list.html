@@ -14,17 +14,13 @@
                 {% if not user.is_superuser %}
                     {% if user not in request.user.friends.all and user != request.user %}
                     <div class="row justify-content-between my-3">
-                        <div class="col-4">
+                        <div class="col-8">
                             <a href="{% url 'profile' user.id %}" class='text-decoration-none'>
-                                {% if user.avatar %}
-                                    <img src="{{ user.avatar.url }}" alt="" class="border border-3 rounded-circle mb-2" style="max-width: 50px;">
-                                {% else %}
-                                    <img src="{% static 'images/no-avatar.png' %}" alt="" class="border border-3 rounded-circle mb-2" style="max-width: 50px;">
-                                {% endif %}
+                                <img src="{{ user.avatar.url }}" alt="" class="border border-3 rounded-circle mb-2" style="max-width: 50px;">
                                 <span>{{ user.username }}</span>
                             </a>
                         </div>
-                        <a href="{% url 'send-friend-request' user.id %}" class="btn btn-outline-warning btn-sm col-6 h-100 align-self-center">Add to Friends</a>
+                        <a href="{% url 'send-friend-request' user.id %}" style="max-width: 110px;" class="btn btn-outline-warning btn-sm col-6 h-100 align-self-center">Add to Friends</a>
                     </div>
                     {% endif %}
                 {% endif %}
@@ -35,8 +31,13 @@
             {% for friend in user.friends.all %}
                 {% if friend != request.user %}
                     <div class="row justify-content-between my-3">
-                        <div class="col-4">{{ friend.username }}</div>
-                        <a href="{% url 'send-friend-request'  friend.id %}" class="btn btn-outline-danger btn-sm col-6">Delete Friend</a>
+                        <div class="col-8">
+                            <a href="{% url 'profile' friend.id %}" class='text-decoration-none'>
+                                <img src="{{ friend.avatar.url }}" alt="" class="border border-3 rounded-circle mb-2" style="max-width: 50px; height: 50px;">
+                                <span>{{ friend.username }}</span>
+                            </a>
+                        </div>
+                        <a href="{% url 'send-friend-request'  friend.id %}" style="max-width: 110px;" class="btn btn-outline-danger btn-sm col-6 h-100 align-self-center">Delete Friend</a>
                     </div>
                 {% endif %}
             {% endfor %}

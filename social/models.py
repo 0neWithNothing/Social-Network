@@ -1,6 +1,7 @@
 import os
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.dispatch import receiver
 # Create your models here.
 
@@ -8,7 +9,7 @@ from django.dispatch import receiver
 
 class User(AbstractUser):
     friends = models.ManyToManyField("User", blank=True)
-
+    username = models.CharField(max_length=12)
     email = models.EmailField(unique=True)
     bio = models.TextField(max_length=300, blank=True)
     avatar = models.ImageField(upload_to="images", default='no-avatar.png')
