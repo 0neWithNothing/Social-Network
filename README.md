@@ -7,7 +7,7 @@ This is a twitter like application
 * Creating new posts
 * Like and comment posts
 * Add to friend with friend request
-* Real time chat on wesockets
+* Real time chat on WebSockets
 
 ### Installation
 1. Copy repository
@@ -15,9 +15,9 @@ This is a twitter like application
 `python3 -m venv venv` </br>
 `source venv/bin/activate` or `venv\Scripts\activate` for windows
 3. Install requirements </br>
-`pip install -r requirements`
+`pip install -r requirements.txt`
 4. Run migrations </br>
-`./manage.py makemigrations` </br>
-`./manage.py migrate`
-5. Run `./manage.py runserver`
+`python manage.py makemigrations` </br>
+`python manage.py migrate`
+5. Run `python manage.py runserver`
 6. Go to [localhost:8000](http://127.0.0.1:8000)
