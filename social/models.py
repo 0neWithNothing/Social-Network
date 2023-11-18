@@ -12,12 +12,12 @@ class User(AbstractUser):
     username = models.CharField(max_length=12)
     email = models.EmailField(unique=True)
     bio = models.TextField(max_length=300, blank=True)
-    avatar = models.ImageField(upload_to="images", default='no-avatar.png')
+    avatar = models.ImageField(upload_to="images", default="no-avatar.png")
     date_of_birth = models.DateField(null=True, blank=True)
     online_status = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
         return self.username
@@ -34,7 +34,7 @@ class Post(models.Model):
     text = models.TextField(max_length=300, blank=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="posts")
     date = models.DateTimeField(auto_now=True)
-    likes = models.ManyToManyField(User, related_name='post_like')
+    likes = models.ManyToManyField(User, related_name="post_like")
 
     def number_of_likes(self):
         return self.likes.count()
@@ -42,12 +42,15 @@ class Post(models.Model):
     class Meta:
         ordering = ["-date"]
 
+    def __str__(self) -> str:
+        return f"{self.author.username} - {self.date}"
+
 
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="comments")
     text = models.TextField(max_length=300)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    likes = models.ManyToManyField(User, related_name='comment_like')
+    likes = models.ManyToManyField(User, related_name="comment_like")
     date = models.DateTimeField(auto_now=True)
 
     def number_of_likes(self):
@@ -56,6 +59,8 @@ class Comment(models.Model):
     class Meta:
         ordering = ["date"]
 
+    def __str__(self) -> str:
+        return f"{self.author.username} - {self.date}"
 
 @receiver(models.signals.post_delete, sender=Post)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
