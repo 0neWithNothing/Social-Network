@@ -21,3 +21,6 @@ This is a twitter like application
 `python manage.py migrate`
 5. Run `python manage.py runserver`
 6. Go to [localhost:8000](http://127.0.0.1:8000)
+#### Have 2 users for testing (if you don't want to register with email confirmation):
+- Login: `Maxim`, Password: `qweasdzxc22`
+- Login: `Alex`, Password: `qweasdzxc22`
