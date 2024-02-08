@@ -17,11 +17,8 @@ This is a twitter like application
 `source venv/bin/activate` or `venv\Scripts\activate` for windows
 3. Install requirements </br>
 `pip install -r requirements.txt`
-4. Run migrations </br>
-`python manage.py makemigrations` </br>
-`python manage.py migrate`
-5. Run `python manage.py runserver`
-6. Go to [localhost:8000](http://127.0.0.1:8000)
+4. Run `python manage.py runserver`
+5. Go to [localhost:8000](http://127.0.0.1:8000)
 #### Have 2 users for testing (if you don't want to register with email confirmation):
 - Login: `Maxim`, Password: `qweasdzxc22`
 - Login: `Alex`, Password: `qweasdzxc22`
