@@ -8,6 +8,7 @@ This is a twitter like application
 * Like and comment posts
 * Add to friend with friend request
 * Real time chat on WebSockets
+* Simple search
 
 ### Installation
 1. Copy repository
