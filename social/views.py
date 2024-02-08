@@ -1,11 +1,11 @@
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
-from django.contrib.auth import get_user_model
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode  
-from django.utils.encoding import force_bytes, force_str
-from django.template.loader import render_to_string  
-from django.contrib.sites.shortcuts import get_current_site  
+# from django.contrib.auth import get_user_model
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode  
+# from django.utils.encoding import force_bytes, force_str
+# from django.template.loader import render_to_string  
+# from django.contrib.sites.shortcuts import get_current_site  
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views import View
 from django.contrib.auth import login
@@ -13,13 +13,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
-from django.core.mail import EmailMessage
+# from django.core.mail import EmailMessage
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.exceptions import PermissionDenied
 
 from .models import User, FriendRequest, Post, Comment
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreationForm, UserUpdateForm, CommentCreateForm
-from .token import email_verification_token
+# from .token import email_verification_token
 
 # Create your views here.
 
@@ -37,49 +36,51 @@ class SignupUserView(CreateView):
     form_class = CustomUserCreationForm
     template_name = "social/signup_user.html"
 
-    def _send_email_verification(self, user):
-        current_site = get_current_site(self.request)
-        subject = 'Activate Your Account'
-        body = render_to_string('email_verification.html',
-            {
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': email_verification_token.make_token(user),
-            }
-        )
-        EmailMessage(to=[user.email], subject=subject, body=body).send()
+    # def _send_email_verification(self, user):
+    #     current_site = get_current_site(self.request)
+    #     subject = 'Activate Your Account'
+    #     body = render_to_string('email_verification.html',
+    #         {
+    #             'domain': current_site.domain,
+    #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+    #             'token': email_verification_token.make_token(user),
+    #         }
+    #     )
+    #     EmailMessage(to=[user.email], subject=subject, body=body).send()
 
     def form_valid(self, form):
-        user = form.save(commit=False)
-        user.is_active = False
-        user.save()
-        self._send_email_verification(user)
+        user = form.save()
+        login(self.request, user)
+        # user = form.save(commit=False)
+        # user.is_active = False
+        # user.save()
+        # self._send_email_verification(user)
         return redirect("home")
 
 
 #Activete user account by email
 
-class ActivateView(View):
+# class ActivateView(View):
 
-    def get_user_from_email_verification_token(self, uidb64, token):
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = get_user_model().objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-            return None
+#     def get_user_from_email_verification_token(self, uidb64, token):
+#         try:
+#             uid = force_str(urlsafe_base64_decode(uidb64))
+#             user = get_user_model().objects.get(pk=uid)
+#         except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+#             return None
 
-        if user is not None and email_verification_token.check_token(user, token):
-            return user
+#         if user is not None and email_verification_token.check_token(user, token):
+#             return user
 
-        return None
+#         return None
 
-    def get(self, request, uidb64, token):
-        user = self.get_user_from_email_verification_token(uidb64, token)
-        if user is not None:
-            user.is_active = True
-            user.save()
-            login(request, user)
-        return redirect("home")
+#     def get(self, request, uidb64, token):
+#         user = self.get_user_from_email_verification_token(uidb64, token)
+#         if user is not None:
+#             user.is_active = True
+#             user.save()
+#             login(request, user)
+#         return redirect("home")
 
 
 #Authentication users
