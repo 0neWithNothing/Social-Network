@@ -68,7 +68,10 @@
                 <div class="row">
                     <div class="col-1 me-2"></div>
                     <div class="col fs-5">{{ comment.text }}</div>
-                    <div class='col-1 align-self-end text-end ps-0'>
+                    
+                </div>
+                <div class="row">
+                    <div class='col align-self-end text-end ps-0'>
                         {% if user.is_authenticated %}
                         <form action="{% url 'comment-like' %}" method="POST" class="like-comment" id="{{ comment.id }}">
                             {% csrf_token %}

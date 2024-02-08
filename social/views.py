@@ -15,6 +15,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.core.mail import EmailMessage
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 
 from .models import User, FriendRequest, Post, Comment
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, PostCreationForm, UserUpdateForm, CommentCreateForm
@@ -109,11 +110,18 @@ class ProfileView(DetailView):
 
 # Update User
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(UserPassesTestMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = "social/edit_profile.html"
     success_url = '/'
+
+    def handle_no_permission(self):
+        return HttpResponse("Permission denied")
+
+
+    def test_func(self):
+        return self.request.user == self.get_object()
 
 
 #Two functions below for sending and accepting friend requests
@@ -194,7 +202,7 @@ class PostDeleteView(UserPassesTestMixin, DeleteView):
 
 class PostDetailView(View):
     def get(self, request, pk):
-        post = Post.objects.get(id=pk)
+        post = get_object_or_404(Post, id=pk)
 
         context = {
             "post": post,
@@ -205,7 +213,7 @@ class PostDetailView(View):
 
     def post(self, request, pk):
         comment_form = CommentCreateForm(request.POST)
-        post = Post.objects.get(id=pk)
+        post = get_object_or_404(Post, id=pk)
         user = request.user
 
         if comment_form.is_valid():

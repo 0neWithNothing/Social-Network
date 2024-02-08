@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 
 urlpatterns = [
@@ -12,7 +13,7 @@ urlpatterns = [
     path('users/', views.UsersListView.as_view(), name='users-list'),
     path('activate/<uidb64>/<token>', views.ActivateView.as_view(), name='activate'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
-    path('add-post/', views.PostCreateView.as_view(), name='add-post'),
+    path('add-post/', login_required(views.PostCreateView.as_view()), name='add-post'),
     path('post-like/', views.post_like, name="post-like"),
     path('comment-like/', views.comment_like, name="comment-like"),
     path('profile/<int:pk>/update/', views.UserUpdateView.as_view(), name='update-profile'),

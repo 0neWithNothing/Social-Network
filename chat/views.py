@@ -12,7 +12,7 @@ User = get_user_model()
 
 @login_required
 def index(request):
-    users = User.objects.exclude(username=request.user.username)
+    users = request.user.friends.all()
     unread = ChatNotification.objects.filter(Q(user=request.user)&Q(is_seen=False)).count()
 
     return render(request, "chat/index.html", {"users": users, "unread": unread})
@@ -21,7 +21,7 @@ def index(request):
 @login_required
 def room(request, username):
     user_obj = User.objects.get(username=username)
-    users = User.objects.exclude(username=request.user.username)
+    users = request.user.friends.all()
     unread = ChatNotification.objects.filter(Q(user=request.user)&Q(is_seen=False)).count()
 
     if request.user.id > user_obj.id:
